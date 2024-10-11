@@ -128,3 +128,4 @@ SET(TGT2_APPLIST cfs_lib osk_c_fw osk_42_lib kit_ci kit_sch kit_to cs ds fm hs l
 
 SET(TGT2_FILELIST cfe_es_startup.scr osk_to_pkt_tbl.json osk_sch_msg_tbl.json osk_sch_sch_tbl.json f42_ctrl_tbl.json pl_sim_lib_ini.json pl_sim_app_ini.json pl_mgr_app_ini.json)
 
+	

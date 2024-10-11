@@ -9,8 +9,8 @@ SET(CMAKE_SYSTEM_PROCESSOR      i686)
 # Specify the cross compiler executables
 # Typically these would be installed in a home directory or somewhere
 # in /opt.  However in this example the system compiler is used.
-SET(CMAKE_C_COMPILER            "/usr/bin/gcc")
-SET(CMAKE_CXX_COMPILER          "/usr/bin/g++")
+SET(CMAKE_C_COMPILER            "/usr/bin/riscv64-linux-gnu-gcc")
+SET(CMAKE_CXX_COMPILER          "/usr/bin/riscv64-linux-gnu-cpp")
 
 # Configure the find commands
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM   NEVER)
@@ -24,6 +24,6 @@ SET(OSAL_SYSTEM_BSPNAME     "pc-linux")
 SET(OSAL_SYSTEM_OSTYPE      "posix")
 
 # This adds the "-m32" flag to all compile commands
-SET(CMAKE_C_FLAGS_INIT "-m32" CACHE STRING "C Flags required by platform")
-SET(CMAKE_CXX_FLAGS_INIT "-m32" CACHE STRING "C++ Flags required by platform")
+SET(CMAKE_C_FLAGS_INIT "-nostartfiles" CACHE STRING "C Flags required by platform")
+SET(CMAKE_CXX_FLAGS_INIT "-nostartfiles" CACHE STRING "C++ Flags required by platform")
 

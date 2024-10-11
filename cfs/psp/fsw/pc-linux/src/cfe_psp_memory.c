@@ -88,8 +88,6 @@ int32 CFE_PSP_InitUserReservedArea(uint32 RestartType );
 /*
 **  External Declarations
 */
-extern unsigned int _init;
-extern unsigned int _fini;
 
 /*
 ** Global variables
@@ -136,7 +134,7 @@ int32 CFE_PSP_InitCDS(uint32 RestartType )
    if ((key = ftok(CFE_PSP_CDS_KEY_FILE, 'R')) == -1) 
    {
         OS_printf("CFE_PSP: Cannot Create CDS Shared memory key!\n");
-        exit(-1);
+        while(1);
    }
 
    /* 
@@ -145,7 +143,7 @@ int32 CFE_PSP_InitCDS(uint32 RestartType )
    if ((CDSShmId = shmget(key, CFE_PSP_CDS_SIZE, 0644 | IPC_CREAT)) == -1) 
    {
         OS_printf("CFE_PSP: Cannot shmget CDS Shared memory Segment!\n");
-        exit(-1);
+        while(1);
    }
 
    /* 
@@ -155,7 +153,7 @@ int32 CFE_PSP_InitCDS(uint32 RestartType )
    if (CFE_PSP_CDSPtr == (uint8 *)(-1)) 
    {
         OS_printf("CFE_PSP: Cannot shmat to CDS Shared memory Segment!\n");
-        exit(-1);
+        while(1);
    }
 
    if ( RestartType == CFE_PSP_RST_TYPE_POWERON )
@@ -349,7 +347,7 @@ int32 CFE_PSP_InitResetArea(uint32 RestartType)
    if ((key = ftok(CFE_PSP_RESET_KEY_FILE, 'R')) == -1) 
    {
         OS_printf("CFE_PSP: Cannot Create Reset Area Shared memory key!\n");
-        exit(-1);
+        while(1);
    }
 
    /* 
@@ -358,7 +356,7 @@ int32 CFE_PSP_InitResetArea(uint32 RestartType)
    if ((ResetAreaShmId = shmget(key, CFE_PSP_RESET_AREA_SIZE, 0644 | IPC_CREAT)) == -1) 
    {
         OS_printf("CFE_PSP: Cannot shmget Reset Area Shared memory Segment!\n");
-        exit(-1);
+        while(1);
    }
 
    /* 
@@ -368,7 +366,7 @@ int32 CFE_PSP_InitResetArea(uint32 RestartType)
    if (CFE_PSP_ResetAreaPtr == (uint8 *)(-1)) 
    {
         OS_printf("CFE_PSP: Cannot shmat to Reset Area Shared memory Segment!\n");
-        exit(-1);
+        while(1);
    }
 
    if ( RestartType == CFE_PSP_RST_TYPE_POWERON )
@@ -479,7 +477,7 @@ int32 CFE_PSP_InitUserReservedArea(uint32 RestartType )
    if ((key = ftok(CFE_PSP_RESERVED_KEY_FILE, 'R')) == -1) 
    {
         OS_printf("CFE_PSP: Cannot Create User Reserved Area Shared memory key!\n");
-        exit(-1);
+        while(1);
    }
 
    /* 
@@ -488,7 +486,7 @@ int32 CFE_PSP_InitUserReservedArea(uint32 RestartType )
    if ((UserShmId = shmget(key, CFE_PSP_USER_RESERVED_SIZE, 0644 | IPC_CREAT)) == -1) 
    {
         OS_printf("CFE_PSP: Cannot shmget User Reserved Area Shared memory Segment!\n");
-        exit(-1);
+        while(1);
    }
 
    /* 
@@ -498,7 +496,7 @@ int32 CFE_PSP_InitUserReservedArea(uint32 RestartType )
    if (CFE_PSP_UserReservedAreaPtr == (uint8 *)(-1)) 
    {
         OS_printf("CFE_PSP: Cannot shmat to User Reserved Area Shared memory Segment!\n");
-        exit(-1);
+        while(1);
    }
 
    if ( RestartType == CFE_PSP_RST_TYPE_POWERON )
@@ -763,17 +761,27 @@ int32 CFE_PSP_GetKernelTextSegmentInfo(cpuaddr *PtrToKernelSegment, uint32 *Size
 int32 CFE_PSP_GetCFETextSegmentInfo(cpuaddr *PtrToCFESegment, uint32 *SizeOfCFESegment)
 {
    int32 return_code;
+   cpuaddr StartAddress;
+   cpuaddr EndAddress;
    
    if ( SizeOfCFESegment == NULL )
    {
-      return_code = CFE_PSP_ERROR;
+      return_code = OS_ERROR;
    }
    else
    {
-      *PtrToCFESegment = (cpuaddr)(&_init);
-      *SizeOfCFESegment = (uint32) (((cpuaddr) &_fini) - ((cpuaddr) &_init));
+      /*
+      ** Get the kernel start and end
+      ** addresses from the BSP, because the 
+      ** symbol table does not contain the symbls we need for this
+      */
+      StartAddress = (cpuaddr) 0x0;
+      EndAddress = (cpuaddr) 0x1024;
+
+      *PtrToCFESegment = StartAddress;
+      *SizeOfCFESegment = (uint32) (EndAddress - StartAddress);
       
-      return_code = CFE_PSP_SUCCESS;
+      return_code = OS_SUCCESS;
    }
    
    return(return_code);
